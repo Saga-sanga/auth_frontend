@@ -8,6 +8,7 @@ import logo from "./images/logo.svg";
 import graphics from "./images/signup-graphic.svg";
 import OtpInput from "react-otp-input";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { usePostSignupOTP } from "../../hooks/usePostSignupOTP";
 
 // TS types
 type RequestObjectType = {
@@ -38,9 +39,7 @@ const SignUp = () => {
   const AlertMessage = ({ message }: { message: string }) => {
     return (
       <Alert
-        className={`${
-          alert ? "" : "hidden"
-        } absolute top-6 w-96 bg-yellow-400 z-[1100]`}
+        className="absolute top-6 w-96 bg-yellow-400 z-[1100]"
       >
         <AlertTitle>Notice!</AlertTitle>
         <button
@@ -313,7 +312,7 @@ const SignUp = () => {
         </span>
       </div>
 
-      <AlertMessage message={alertMessage} />
+      {alert ? <AlertMessage message={alertMessage} /> : ""}
 
       <Modal
         show={show}
