@@ -1,26 +1,51 @@
 import React, { useState } from "react";
 import {  useSearchParams,Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
+import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
+import { LuXCircle } from "react-icons/lu";
 
 import Modal from "./otpModal";
 import image from './group.svg';
 import logo from './logo.svg'
 
 const NewPassword: React.FC = () => {
-  ;
   const [searchparams] = useSearchParams();
   const email = searchparams.get("email");
   const [pass, setPass] = useState("");
   const [add, setAdd] = useState("");
   const [show, setShow] = useState(false);
+  const [alert, setAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+
 
   const handleModal = () => {
     setShow(true);
   };
 
+// Alert component
+const AlertMessage = ({ message }: { message: string }) => {
+  return (
+    <Alert
+  
+      className="absolute top-6 w-60 sm:w-96 left-[50vw] translate-x-[-50%] backdrop-filter backdrop-blur-sm bg-opacity-90 bg-yellow-400"
+    >
+      <AlertTitle>Notice!</AlertTitle>
+      <button
+        onClick={() => setAlert(false)}
+        className="absolute right-2 top-2"
+      >
+        <LuXCircle className="w-5 h-5" />
+      </button>
+      <AlertDescription>{message}</AlertDescription>
+    </Alert>
+  );
+};
+
+
   const handleForm = (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLSpanElement>) => {
     e.preventDefault();
     // console.log(email, pass);
+
     fetch("https://api.trustauthx.com/forgot/Signup", {
       method: "PUT",
       headers: {
@@ -31,16 +56,20 @@ const NewPassword: React.FC = () => {
         username: email,
         password: pass,
         is_pool: true,
-      }),
+      }), 
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data.is_ok == true && data.status === 200) {
           // console.log(data.msg);
           setAdd(data.msg);
           console.log(add)
           handleModal();
+        }else if(data.detail){
+          setAlertMessage(data.detail);
+          setAlert(true);
+          
         }
         
       })
@@ -101,6 +130,8 @@ const NewPassword: React.FC = () => {
          <span>© 2023 TrustAuthx. All rights reserved.</span> 
         </div>
       </div>
+       {alert && <AlertMessage message={alertMessage} />}
+
      
     {show && <Modal  handleForm = {handleForm} add = {add}/>}
     </div>

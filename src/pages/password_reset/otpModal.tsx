@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import OtpInput from "react-otp-input";
-import './modalOTP.css'
-interface ModalProps {
+import './modalOTP.css';
+interface ModalProps { 
  
   handleForm: (e: React.MouseEvent<HTMLSpanElement>) => void;
   add: string;
@@ -10,18 +10,20 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ handleForm, add }) => {
   const [otp, setOtp] = useState("");
+  const [alert, setAlert] = useState(false)
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
+    setAlert(false);
     if (otp.length === 8) {
-      
       handleOTPForm();
     }
   }, [otp]);
 
 
   const handleOTPForm = () => {
-    // e.preventDefault();
+    setAlert(false);
     console.log(otp, add);
     fetch("https://api.trustauthx.com/forgot/verify_email", {
       method: "POST",
@@ -37,11 +39,15 @@ const Modal: React.FC<ModalProps> = ({ handleForm, add }) => {
     })
       .then((response) => response.json())
       .then((data) => {
+        console.log(data)
+       
         if (data.status === 200 && data.is_ok === true) {
           navigate("/");
         }
-        if (data.detail) {
-          console.log(data.details);
+        else if (data.detail) {
+          setMessage("Invalid OTP")
+          setAlert(true)
+
         }
       })
       .catch((err) => console.log(err));
@@ -57,15 +63,6 @@ const Modal: React.FC<ModalProps> = ({ handleForm, add }) => {
         </p>
         <h2 className="text-2xl m-4">Enter e-mail OTP</h2>
         
-          {/* <OtpInput
-                  containerStyle="gap-1"
-                  inputStyle="w-8 h-10 p-0 text-center rounded-xl"
-                  value={otp}
-                  onChange={setOtp}
-                  numInputs={8}
-                  renderSeparator={<span></span>}
-                  renderInput={(props) => <input  {...props} />}
-                /> */}
                 <OtpInput
                     containerStyle="flex justify-center gap-1 md:gap-4"
                     inputStyle="modal-otp-width h-8 sm:h-9 md:h-10 p-0 text-center rounded-xl"
@@ -74,12 +71,13 @@ const Modal: React.FC<ModalProps> = ({ handleForm, add }) => {
                      numInputs={8}
                      renderSeparator={<span></span>}
                     renderInput={(props) => <input {...props} />}
-/>
+                 />
+                 {alert && <p className="text-red-500 mt-4" >{message}</p>}
 
-
-        <div className="flex w-full mt-9">
+                     
+          <div className="flex w-full mt-9">
            
-          <span className="cursor-pointer  text-transparent  bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600 " 
+          <span className="cursor-pointer  text-transparent  bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600" 
           onClick = {handleForm} >I didn't receive Email &gt;</span>
         </div>
       </div>

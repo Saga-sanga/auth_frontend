@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { createSearchParams } from 'react-router-dom';
 import { FaAngleRight } from "react-icons/fa";
 
-
+ 
 import logo from './logo.svg';
 import image from './group.svg';
 
@@ -39,7 +39,7 @@ const PasswordReset: React.FC = () => {
         <form className="flex flex-col w-full items-center justify-center text-left" onSubmit={handleForm}>
           <div className="relative w-[90vw] sm:w-3/4  md:w-1/2 lg:w-1/2 my-4 flex items-center">
             <input
-              type="email"
+              type="text"
               id="email"
               className="block w-full text-sm text-gray-900 bg-transparent rounded-lg border-2"
               placeholder="name@gmail.com"
