@@ -173,13 +173,14 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col sm:flex-row items-center justify-center">
+    <div className="min-h-screen flex flex-col sm:flex-row justify-center">
       <div className="container sm:basis-3/5 flex flex-col min-h-screen">
         <div className="self-start mt-7">
-          <img src={logo} alt="AuthX logo" />
+          <img className="w-8" src={logo} alt="AuthX logo" />
         </div>
         <div className="flex my-12 items-center justify-center grow sm:mr-12">
           <div className="md:w-96 lg:w-[32rem]">
+            <img className="mx-auto mb-8" src={logo} alt="AuthX logo" />
             <h1 className="scroll-m-20 text-[2.5rem] text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
               Create a new AuthX account
             </h1>
@@ -187,7 +188,7 @@ const SignUp = () => {
             <div className="login-wrapper form-wrapper">
               <form
                 onSubmit={handleFormSubmit}
-              // className="was-validated"
+                // className="was-validated"
               >
                 <div className="form-group relative">
                   <label
@@ -297,13 +298,13 @@ const SignUp = () => {
           </div>
         </div>
       </div>
-      <div className="bg-black min-h-screen w-full sm:basis-2/5 relative">
+      <div className="bg-black min-h-screen w-full sm:basis-2/5 relative flex flex-col justify-center">
         <div className="flex flex-col items-center my-10 md:mt-12">
           <h1 className="text-3xl xl:text-4xl mx-4 text-white max-w-md tracking-widest font-light text-center">
             AuthX’s Frictionless Signup/Login Hybrids
           </h1>
           <img
-            className="mt-8 md:mt-10 xl:mt-12 w-3/5"
+            className="mt-8 md:mt-10 xl:mt-12 w-3/5 max-h-[65vh]"
             src={graphics}
             alt="AuthX pre login"
             width={340}

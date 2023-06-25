@@ -28,7 +28,10 @@ const Login = () => {
   // email validation
   const asyncEmailValidation = async (email: string) => {
     const activeElement = document.activeElement as HTMLInputElement;
-    if (!activeElement || (activeElement && activeElement?.type === "submit" && isValid)) {
+    if (
+      !activeElement ||
+      (activeElement && activeElement?.type === "submit" && isValid)
+    ) {
       try {
         const response = await checkUser({ emailid: email });
         const { detail } = response;
@@ -84,17 +87,17 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState<FormDataEntryValue>("");
   const dispatch = useDispatch<AppDispatch>();
-  const [otp,setOtp]=useState("")
-  const [customError,setCustomError]=useState<any>("")
+  const [otp, setOtp] = useState("");
+  const [customError, setCustomError] = useState<any>("");
   const navigate = useNavigate();
-  const path:string=useLocation().pathname;
+  const path: string = useLocation().pathname;
 
   useEffect(() => {
     setLoading(true);
 
-    if(path=='/password'){
-      if(!getValues().username){
-        navigate('/')
+    if (path == "/password") {
+      if (!getValues().username) {
+        navigate("/");
       }
     }
     if (userToken?.access_token) {
@@ -107,11 +110,12 @@ const Login = () => {
     }
 
     const formData = getValues();
-    if (gAuth && formData.username.length 
-      // && 
+    if (
+      gAuth &&
+      formData.username.length
+      // &&
       // formData.password.length
-      
-      ) {
+    ) {
       const loginAction = loginToken(formData as FormValues);
       dispatch(loginAction);
       setLoading(false);
@@ -175,7 +179,7 @@ const Login = () => {
   };
 
   // on submit handler
-  const onSubmitHandler = async(pwd:FormDataEntryValue) => {
+  const onSubmitHandler = async (pwd: FormDataEntryValue) => {
     try {
       console.log("inside submit handler email", isValid);
       setLoading(true);
@@ -185,21 +189,21 @@ const Login = () => {
         if (faValue === "true") {
           setShow(true);
         } else {
-          const data={
-            username:getValues().username,
-            password:pwd,
-            otp:otp
-          }
+          const data = {
+            username: getValues().username,
+            password: pwd,
+            otp: otp,
+          };
           const res = await dispatch(loginToken(data));
           console.log("response from login token ", res);
           if (res["type"] === "auth/loginToken/fulfilled" && !res.payload) {
             setCustomError({
-              "password": { 
+              password: {
                 type: "custom",
                 message: "Invalid Password",
-              }
+              },
             });
-          }else{
+          } else {
             navigate("/dashboard/page1");
           }
         }
@@ -215,9 +219,9 @@ const Login = () => {
 
   const handleEmailSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // e.preventDefault();
-    console.log( getValues())
-    setCustomError("")
-    navigate('/password')
+    console.log(getValues());
+    setCustomError("");
+    navigate("/password");
   };
 
   const handlePasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -227,36 +231,43 @@ const Login = () => {
     // setPassword(parsedData.password);
     onSubmitHandler(parsedData.password);
   };
- 
 
   return (
-    <div className="min-h-screen flex flex-col sm:flex-row items-center justify-center">
+    <div className="min-h-screen flex flex-col sm:flex-row justify-center">
       <div className="container sm:basis-3/5 flex flex-col min-h-screen">
         <div className="self-start mt-7">
-          <img src={logo} alt="AuthX logo" />
+          <img className="w-8" src={logo} alt="AuthX logo" />
         </div>
         <div className="flex my-12 items-center justify-center grow sm:mr-12">
           <div className="mb-32 md:w-96 lg:w-[32rem]">
+            <img className="mx-auto mb-8" src={logo} alt="AuthX logo" />
             <h1 className="scroll-m-20 text-[2.5rem] text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
               Login to your AuthX account
             </h1>
-            {  path!="/password" ?<EmailComponent handleEmailSubmit={handleEmailSubmit} register={register} errors={errors} handleSubmit={handleSubmit} />:
-             <PasswordComponent
+            {path != "/password" ? (
+              <EmailComponent
+                handleEmailSubmit={handleEmailSubmit}
+                register={register}
+                errors={errors}
+                handleSubmit={handleSubmit}
+              />
+            ) : (
+              <PasswordComponent
                 handlePasswordSubmit={handlePasswordSubmit}
                 password={password}
                 errors={customError}
               />
-            }
+            )}
           </div>
         </div>
       </div>
-      <div className="bg-black min-h-screen w-full sm:basis-2/5 relative">
+      <div className="bg-black min-h-screen w-full sm:basis-2/5 relative flex flex-col justify-center">
         <div className="flex flex-col items-center my-10 md:mt-12">
           <h1 className="text-3xl xl:text-4xl mx-4 text-white max-w-md tracking-widest font-light text-center">
             AuthX: Ensure Security at every level
           </h1>
           <img
-            className="mt-8 md:mt-10 xl:mt-12 w-3/5"
+            className="mt-8 max-h-[65vh] md:mt-10 xl:mt-12 w-3/5"
             src={graphic}
             alt="AuthX pre login"
             width={340}
