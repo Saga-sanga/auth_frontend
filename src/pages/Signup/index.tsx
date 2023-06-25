@@ -7,8 +7,12 @@ import { Modal } from "react-bootstrap";
 import logo from "./images/logo.svg";
 import graphics from "./images/signup-graphic.svg";
 import OtpInput from "react-otp-input";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Alert, AlertDescription, AlertTitle } from "../../components/ui/alert";
 import { createRipple } from "../../helper/createRipple";
+import { useForm } from "react-hook-form";
+import { ErrorMessage } from "@hookform/error-message";
 
 // TS types
 type RequestObjectType = {
@@ -21,6 +25,27 @@ type RequestObjectType = {
   types: string;
 };
 
+//yup schema
+const registerSchema = yup
+  .object({
+    username: yup
+      .string()
+      .required("Please enter your email address")
+      .email("Please enter a valid email"),
+    password: yup.string().required("Please enter a password").min(8),
+    "referral-id": yup.string().nullable(),
+    agreeTerms: yup
+      .boolean()
+      .oneOf([true], "Please accept our Terms of Service and Privacy policy"),
+  })
+  .required();
+
+type RegisterUser = {
+  username: string;
+  password: string;
+  "referral-id": string | null | undefined;
+  agreeTerms: boolean | undefined;
+};
 // TODO: debounce I have not received email button
 // Remove bootstrap components
 // Add email validation
@@ -34,6 +59,15 @@ const SignUp = () => {
   const [alert, setAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [requestObject, setRequestObject] = useState<RequestObjectType>();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterUser>({
+    resolver: yupResolver(registerSchema),
+    mode: "onSubmit",
+  });
 
   // Alert component
   const AlertMessage = ({ message }: { message: string }) => {
@@ -147,13 +181,10 @@ const SignUp = () => {
   };
 
   // form submit handler
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const parsedData = Object.fromEntries(formData.entries());
+  const handleFormSubmit = async (data: RegisterUser) => {
     const reqObject = {
-      username: parsedData.username,
-      password: parsedData.password,
+      username: data.username,
+      password: data.password,
       full_name: "Test User",
       is_pool: true,
       link: true,
@@ -162,12 +193,6 @@ const SignUp = () => {
     };
 
     setAlert(false);
-    if (!parsedData.agreeTerms) {
-      setAlertMessage("Please accept our Terms of Service and Privacy Policy!");
-      setAlert(true);
-      return;
-    }
-
     setRequestObject(reqObject);
     setLoading(true);
   };
@@ -187,7 +212,7 @@ const SignUp = () => {
 
             <div className="login-wrapper form-wrapper">
               <form
-                onSubmit={handleFormSubmit}
+                onSubmit={handleSubmit(handleFormSubmit)}
                 // className="was-validated"
               >
                 <div className="form-group relative">
@@ -198,12 +223,18 @@ const SignUp = () => {
                     Email
                   </label>
                   <input
+                    {...register("username")}
                     id="email"
-                    name="username"
                     type="text"
                     className="form-control"
-                    required
                     placeholder="name@example.com"
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="username"
+                    render={({ message }) => (
+                      <p className="text-red-600 pl-8">{message}</p>
+                    )}
                   />
                 </div>
 
@@ -215,12 +246,18 @@ const SignUp = () => {
                     Password
                   </label>
                   <input
+                    {...register("password")}
                     id="password"
                     type="password"
-                    className="form-control"
-                    required
-                    name="password"
+                    className={`form-control border h-14 rounded-lg border-slate-800 w-full ${errors.password && "border-red"}`}
                     placeholder="Enter password"
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name="password"
+                    render={({ message }) => (
+                      <p className="text-red-600 pl-8">{message}</p>
+                    )}
                   />
                 </div>
 
@@ -232,10 +269,10 @@ const SignUp = () => {
                     Referral ID (Optional)
                   </label>
                   <input
+                    {...register("referral-id")}
                     id="referral-id"
                     type="text"
                     className="form-control"
-                    name="referral-id"
                     placeholder="Referral-ID"
                   />
                 </div>
@@ -258,9 +295,9 @@ const SignUp = () => {
 
                 <div className="flex items-center mt-8 md:mt-11">
                   <input
+                    {...register("agreeTerms")}
                     id="terms"
                     type="checkbox"
-                    name="agreeTerms"
                     className="checkbox-customized cursor-pointer"
                   />
                   <label
@@ -277,6 +314,13 @@ const SignUp = () => {
                     </a>
                   </label>
                 </div>
+                <ErrorMessage
+                  errors={errors}
+                  name="agreeTerms"
+                  render={({ message }) => (
+                    <p className="text-red-600 pl-10 mt-2">{message}</p>
+                  )}
+                />
 
                 <div className="ats-content mt-8 md:mt-11">
                   <p className="mb-0 text-xl flex items-center flex-wrap">
