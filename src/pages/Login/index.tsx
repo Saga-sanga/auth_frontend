@@ -6,7 +6,6 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginToken, loginUser } from "../../Feature/Auth/authSlice";
 import { useNavigate } from "react-router-dom";
-// import { Modal } from "react-bootstrap";
 import Modal from "../../components/Modal";
 import OtpInput from "react-otp-input";
 import { AppDispatch } from "../../store";

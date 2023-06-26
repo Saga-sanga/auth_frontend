@@ -3,7 +3,6 @@ import { LuXCircle } from "react-icons/lu";
 import { FaAngleRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-// import { Modal } from "react-bootstrap";
 import Modal from "../../components/Modal";
 import logo from "./images/logo.svg";
 import graphics from "./images/signup-graphic.svg";
