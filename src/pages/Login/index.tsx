@@ -1,326 +1,308 @@
-import React,{useState,useEffect} from 'react';
-import { FaAngleRight, FaApple, FaGoogle, FaMicrosoft } from "react-icons/fa";
-import { Button } from '../../components/ui/Button';
-import {checkUser} from "../../helper/api";
-import {useForm} from "react-hook-form"
-import {yupResolver} from "@hookform/resolvers/yup"
-import * as yup from "yup"
-import { useDispatch , useSelector } from 'react-redux';
-import {loginToken , loginUser} from "../../Feature/Auth/authSlice";
-import { useNavigate } from 'react-router-dom';
-import { Modal } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { checkUser } from "../../helper/api";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { loginToken, loginUser } from "../../Feature/Auth/authSlice";
+import { useNavigate } from "react-router-dom";
+import Modal from "../../components/Modal";
+import OtpInput from "react-otp-input";
+import { AppDispatch } from "../../store";
+import logo from "../Signup/images/logo.svg";
+import graphic from "./images/login-graphic.svg";
+import { EmailComponent } from "./components/EmailComponent";
+import { PasswordComponent } from "./components/PasswordComponent";
+import { useLocation } from "react-router-dom";
 
-
-
+type FormValues = {
+  username: string;
+  password: string;
+  type: string | null;
+  otp: string | undefined;
+};
 
 const Login = () => {
-
-  
-  const { userToken, user } = useSelector((state) => state.auth);
+  const { userToken, user } = useSelector((state: any) => state.auth);
 
   // email validation
-  const asyncEmailValidation = async (email) => {
-    if (!document.activeElement || (document.activeElement && document.activeElement.type === "submit")) {
+  const asyncEmailValidation = async (email: string) => {
+    const activeElement = document.activeElement as HTMLInputElement;
+    if (
+      !activeElement ||
+      (activeElement && activeElement?.type === "submit" && isValid)
+    ) {
       try {
         const response = await checkUser({ emailid: email });
         const { detail } = response;
         if (!detail) {
           if (response.is_pool) {
-            setValue('type', 'pool')
+            setValue("type", "pool");
           } else {
-            setValue('type', 'participant')
+            setValue("type", "participant");
           }
-          setfa2(JSON.stringify(response.fa2))
-          // setError('email', false)
+          setfa2(JSON.stringify(response.fa2 || false));
           return true;
         } else {
-          // setError('email', true);
+          console.log("async email validation failed");
           return false;
         }
       } catch (e) {
-        return false
+        console.log("Error in asyncEmailValidation ", e);
+        return false;
       }
     } else {
-      return true
+      return true;
     }
-  }
-
+  };
 
   // yup handler
-  const schema = yup.object({
-    password: yup.string().required("Password is required").min(3, "Minimum 3 character"),
-    username: yup.string().required("Email field required").email("Valid Email address required").test('userNotFound', 'User not exists', asyncEmailValidation),
-    type: yup.string().nullable().default(""),
-    otp: yup.mixed().default(100000)
-  }).required()
+  const schema = yup
+    .object({
+      username: yup
+        .string()
+        .required("Email field required")
+        .email("Valid Email address required")
+        .test("userNotFound", "User does not exist", asyncEmailValidation),
+      type: yup.string().nullable().default(""),
+    })
+    .required();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid, isSubmitted },
+    setValue,
+    setError,
+    getValues,
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: "onSubmit",
+  });
 
-
-  const { register, handleSubmit, formState: { errors, isValid, isSubmitted },
-    setValue, setError, getValues } = useForm({
-      resolver: yupResolver(schema),
-      mode: "onSubmit"
-    });
-
-
-// setting states
+  // setting states
   const [fa2, setfa2] = useState("null");
   const [show, setShow] = useState(false);
-  const [showA, setShowA] = useState(false);
-  const [showB, setShowB] = useState(false);
   const [gAuth, setgAuth] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [proceed,setProceed] = useState(false);
-  const dispatch = useDispatch();
+  const [password, setPassword] = useState<FormDataEntryValue>("");
+  const dispatch = useDispatch<AppDispatch>();
+  const [otp, setOtp] = useState("");
+  const [customError, setCustomError] = useState<any>("");
   const navigate = useNavigate();
-  
+  const path: string = useLocation().pathname;
 
   useEffect(() => {
-    setLoading(true)
-    if(proceed && userToken === undefined){
-        setShowB(true);
-        setTimeout(() => {
-        setProceed(true);
-        setShowB(false);
-        }, 3000);
+    setLoading(true);
+
+    if (path == "/password") {
+      if (!getValues().username) {
+        navigate("/");
+      }
     }
     if (userToken?.access_token) {
       dispatch(loginUser());
-    setLoading(false)
+      setLoading(false);
     }
     if (user && user?.username) {
       navigate("/dashboard");
-    setLoading(false)
+      setLoading(false);
     }
 
     const formData = getValues();
-    if (gAuth && formData.username.length && formData.password.length) {
-      dispatch(loginToken(formData));
-    setLoading(false)
+    if (
+      gAuth &&
+      formData.username.length
+      // &&
+      // formData.password.length
+    ) {
+      const loginAction = loginToken(formData as FormValues);
+      dispatch(loginAction);
+      setLoading(false);
     }
-    setLoading(false)
-  }, [userToken, user])
+    setLoading(false);
+  }, [userToken, user]);
 
-  let str = "";
-  const nextDigit = (currVal, e) => {
-    str += e;
-    if (str.length === 6) {
-      setValue("otp", str);
-    }
-    let ele = document.querySelectorAll('input.otp');
-    if(str.length !=6){
-      ele[currVal + 0].focus();
-    }
-  }
-
-  const responseSocialAuth = async (response) => {
+  const responseSocialAuth = async (response: any) => {
     // debugger
     const { user, providerId } = response;
-    const { reloadUserInfo: { passwordHash } } = user;
+    const {
+      reloadUserInfo: { passwordHash },
+    } = user;
     if (user && user.email) {
       setgAuth(true);
-      setValue('username', user.email);
-      setValue('password', passwordHash)
+      setValue("username", user.email);
       const userResponse = await checkUser({ emailid: user.email });
       if (userResponse) {
         if (userResponse.fa2) {
-          setShow(true)
+          setShow(true);
         } else {
           if (!userResponse.detail) {
-
-            dispatch(loginToken(getValues()))
+            const formData = getValues();
+            dispatch(
+              loginToken({
+                username: formData.username,
+                // password: formData.password,
+                type: "",
+                otp: otp,
+              } as FormValues)
+            );
           }
         }
       }
     }
-  }
-
-  // otp handler
-  const otpHandler = (e) => {
-    e.preventDefault();
-    dispatch(loginToken(getValues()));
-    setShow(false);
   };
 
-// on submit handler
-  const onSubmitHandler = async(e) => {
-    setLoading(true)
-    const response = await checkUser({ emailid: getValues().username });
-    const faValue = JSON.stringify(response.fa2);
-    if (isValid) {
-      if (faValue === "true") {
-        setShow(true);
-        setProceed(true)
+  // otp handler
+  const otpHandler = async (e: any) => {
+    try {
+      e.preventDefault();
+      const formData = getValues();
+      const res = await dispatch(
+        loginToken({
+          username: formData.username,
+          type: "",
+          otp: otp,
+        } as FormValues)
+      );
+      if (res.type === "auth/loginToken/rejected" && !res.payload) {
+        alert("Invalid OTP");
+        setOtp("");
       } else {
-        dispatch(loginToken(e));
-        setProceed(true)
+        navigate("/dashboard");
       }
-    setLoading(false)
-    } else {
-      setShowA(true);
-      setTimeout(() => {
-        setShowA(false);
-      }, 3000)
-    setLoading(false)
+    } catch (err) {
+      console.log("Error from OTP handler ", e);
+    } finally {
+      setShow(false);
     }
+  };
 
-  }
-
-  const navigatePage = (page) => {
-    navigate(page)
-  }
-
-
-  // for button ripple effect
-  function createRipple(event) {
-    const button = event.currentTarget;
-  
-    const circle = document.createElement("span");
-    const diameter = Math.max(button.clientWidth, button.clientHeight);
-    const radius = diameter / 2;
-  
-    circle.style.width = circle.style.height = `${diameter}px`;
-    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
-    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-    circle.classList.add("ripple");
-  
-    const ripple = button.getElementsByClassName("ripple")[0];
-  
-    if (ripple) {
-      ripple.remove();
+  // on submit handler
+  const onSubmitHandler = async (pwd: FormDataEntryValue) => {
+    try {
+      console.log("inside submit handler email", isValid);
+      setLoading(true);
+      const response = await checkUser({ emailid: getValues().username });
+      const faValue = JSON.stringify(response.fa2);
+      if (isValid) {
+        if (faValue === "true") {
+          setShow(true);
+        } else {
+          const data = {
+            username: getValues().username,
+            password: pwd,
+            otp: otp,
+          };
+          const res = await dispatch(loginToken(data));
+          console.log("response from login token ", res);
+          if (res["type"] === "auth/loginToken/fulfilled" && !res.payload) {
+            setCustomError({
+              password: {
+                type: "custom",
+                message: "Invalid Password",
+              },
+            });
+          } else {
+            navigate("/dashboard/page1");
+          }
+        }
+        setLoading(false);
+      } else {
+        console.log("Not valid");
+        setLoading(false);
+      }
+    } catch (err) {
+      console.log("Error in onSubmitHandler ", err);
     }
-  
-    button.appendChild(circle);
-  }
-  
-  const buttons = document.getElementsByTagName("button");
-  for (const button of buttons) {
-    button.addEventListener("click", createRipple);
-  }
+  };
 
-  
+  const handleEmailSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    // e.preventDefault();
+    console.log(getValues());
+    setCustomError("");
+    navigate("/password");
+  };
 
+  const handlePasswordSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const parsedData = Object.fromEntries(formData.entries());
+    // setPassword(parsedData.password);
+    onSubmitHandler(parsedData.password);
+  };
 
   return (
-    <div>
-      <div className="login-2-page">
-        <div className="container">
-          <div className="row login-row">
-            <div className="col-xs-12 col-sm-12 col-lg-6">
-              <div>
-                <div className="main-text-login ">
-                  <h3 className="r-main-title-2">Business Login</h3>
-                </div>
-                <div className="login2-wrapper form-wrapper">
-
-                  <form onSubmit={handleSubmit(onSubmitHandler)} autoComplete={false} noValidate className={`${isSubmitted && 'was-validated'}`}>
-
-                    <div className="form-group">
-                      <label for="username" className="form-label">
-                        Personal Email</label>
-                      <input 
-                      {...register('username', { required: true })}
-                      type="text" name="username" placeholder="Enter your Email"
-                      className={`form-control undefined ${errors?.username && 'is-invalid'}`}
-                      />
-                      {
-                            (errors.username) && (
-                              <div className="invalid-feedback">
-                                <span>{errors.username?.message}</span>
-                              </div>
-                            )
-                          }
-                    </div>
-
-
-                    <div className="form-group">
-                      <label for="password" className="form-label">Password</label>
-                      <input 
-                       {...register('password', { required: true })} name="password" type="password" className={`form-control undefined ${errors?.password && 'is-invalid'}`}
-                       placeholder="Enter your Password" 
-                      />
-                      {
-                            (errors?.password) && (
-                              <div className="invalid-feedback">
-                                {errors?.password?.message}
-                              </div>
-                            )
-                          }
-                    </div>
-
-                    <div className="a-t-s a-link mt-4">
-                      {/* <span className="a-t-s">Forgot Password ?</span> */}
-                    </div>
-
-                    <div className="d-grid d-grid-login pt-4">
-
-                  <button type='submit' className="btn btn-signup loginbtn block btn-spl-primary">
-                    <span className="signup-txt">Next</span>
-                    <span className="forward-arr"> <FaAngleRight className='pt-1' /></span>
-                  </button>
-                </div>
-
-                  </form>
-
-                </div>
-              </div>
-
-              <div className="relative mt-4">
-                            <div className="absolute inset-0 flex items-center">
-                              <span className="w-full border-t" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase">
-                              <span className="bg-background px-2 text-muted-foreground">
-                                Or continue with
-                              </span>
-                            </div>
-                          </div>
-                          <div className='buttons-row pt-4'>
-                            <Button variant="outline" className='new_btns button1'>
-                              <span className='icon1'> <FaGoogle/> </span> Google
-                              </Button>
-                            <Button variant="outline" className='new_btns button2'><span className='icon2'> <FaApple /> </span>Apple</Button>
-                            <Button variant="outline" className='new_btns button3'><span className='icon3'> <FaMicrosoft/> </span>Microsoft</Button>
-                          </div>
-
-              <div className="ats-content pt-4">
-                <p className="mb-0 text-center">I don’t have Flitchcoin account       &nbsp;
-                  <a className="a-t-s a-link" href="/sign-up">advance to Signup </a>
-                  <span className="forward-arr arr-black"> <FaAngleRight className='pt-2' /></span>
-                </p></div>
-            </div>
-            <div className="col-xs-12 col-sm-12 col-lg-6 login-a-center">
-
-            </div>
+    <div className="min-h-screen flex flex-col sm:flex-row justify-center">
+      <div className="container sm:basis-3/5 flex flex-col min-h-screen">
+        <div className="self-start mt-7">
+          <img className="w-8" src={logo} alt="AuthX logo" />
+        </div>
+        <div className="flex my-12 items-center justify-center grow sm:mr-12">
+          <div className="mb-32 md:w-96 lg:w-[32rem]">
+            <img className="mx-auto mb-8" src={logo} alt="AuthX logo" />
+            <h1 className="scroll-m-20 text-[2.5rem] text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
+              Login to your AuthX account
+            </h1>
+            {path != "/password" ? (
+              <EmailComponent
+                handleEmailSubmit={handleEmailSubmit}
+                register={register}
+                errors={errors}
+                handleSubmit={handleSubmit}
+              />
+            ) : (
+              <PasswordComponent
+                handlePasswordSubmit={handlePasswordSubmit}
+                password={password}
+                errors={customError}
+              />
+            )}
           </div>
         </div>
       </div>
-      <Modal
-                show={show}
-                onHide={() => setShow(false)}
-                backdrop="static"
-                keyboard={false}
-                className="modal-dialog-login"
-              >
-                <div className="modal_popup">
-                  <div className="login_modal_head text-start pt-3 ps-3 pb-2">2 Factor Authentication</div>
-                  <div className="popup_line"></div>
-                  <div className="login_modal_sub pt-2">Please enter <b>2FA</b> code to login</div>
-                  <form className="mt-3">
-                    <input className="otp me-2" type="text" onChange={(e) => nextDigit(1, e.target.value)} />
-                    <input className="otp me-2" type="text" onChange={(e) => nextDigit(2, e.target.value)} />
-                    <input className="otp me-2" type="text" onChange={(e) => nextDigit(3, e.target.value)} />
-                    <input className="otp me-2" type="text" onChange={(e) => nextDigit(4, e.target.value)} />
-                    <input className="otp me-2" type="text" onChange={(e) => nextDigit(5, e.target.value)} />
-                    <input className="otp" type="text" onChange={(e) => nextDigit(6, e.target.value)} />
-                  </form>
-                  <div className="text-center">
-                    <button type="button" className="ok_btn_login mt-5 ps-4 pe-4 mb-4" onClick={otpHandler}>Ok &#10004;</button>
-                  </div>
-                </div>
-              </Modal>
-    </div>
-  )
-}
+      <div className="bg-black min-h-screen w-full sm:basis-2/5 relative flex flex-col justify-center">
+        <div className="flex flex-col items-center my-10 md:mt-12">
+          <h1 className="text-3xl xl:text-4xl mx-4 text-white max-w-md tracking-widest font-light text-center">
+            AuthX: Ensure Security at every level
+          </h1>
+          <img
+            className="mt-8 max-h-[65vh] md:mt-10 xl:mt-12 w-3/5"
+            src={graphic}
+            alt="AuthX pre login"
+            width={340}
+          />
+        </div>
+        <span className="text-white w-full text-right absolute bottom-0 right-0 mb-4 xl:mb-8 mr-6">
+          © 2023 TrustAuthx. All rights reserved.
+        </span>
+      </div>
 
-export default Login
+      <Modal
+        show={show}
+      >
+        <div className="bg-white rounded-3xl p-16 mb-[20vh] mx-6 w-max self-center">
+          <div>
+            <div className="">
+              <div className="text-3xl text-center mb-4">Enter MFA OTP</div>
+              <p className="text-center mb-10 text-slate-600">
+                Enter Multifactor OTP from your authentication app
+              </p>
+              <OtpInput
+                containerStyle="flex justify-center gap-1"
+                inputStyle="otp-input-width h-12 p-0 text-center rounded-xl"
+                value={otp}
+                onChange={setOtp}
+                numInputs={6}
+                renderSeparator={<span></span>}
+                renderInput={(props) => <input {...props} />}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+export default Login;

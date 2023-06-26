@@ -1,4 +1,4 @@
-const API_DOMAIN = 'https://api.flitchcoin.com';
+export const API_DOMAIN = 'https://api.trustauthx.com';
 const FIREBASE_API_KEY = "AIzaSyD9-xgz9FYET9nVocqKmfPqWeOShtDw5AY";
 const FIREBASE_AUTH_DOMAIN = "auth-77872.firebaseapp.com";
 const FIREBASE_PROJECT_ID = "auth-77872";
@@ -14,6 +14,6 @@ export const FIREBASE_CONFIG = {
   appId: FIREBASE_APP_ID,
 }
 export const API_URL = {
-  USER_INFO: `${API_DOMAIN}/api/userchrono_info`,  
+  USER_INFO: `${API_DOMAIN}/user/info`,  
   RANDOM_PASSWORD: `${API_DOMAIN}/api/random/str`,
 }

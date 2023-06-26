@@ -1,5 +1,12 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
+import { string } from "yup";
+
+interface UserLoginDatatype{
+  username:string,
+  password:FormDataEntryValue,
+  otp:string| undefined
+}
 
 const initialState = {
   selectedType: null,
@@ -16,9 +23,9 @@ export const signupUser = createAsyncThunk(
   async (data, thunkAPI) => {    
     try {
       return authService.signupUser(data);
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
@@ -34,9 +41,9 @@ export const verifyEmail = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       return authService.verifyEmail(data);
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
@@ -51,9 +58,9 @@ export const defaultType = createAsyncThunk(
   async (type, thunkAPI) => {
     try {
       return authService.defaultType(type);
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
@@ -68,9 +75,9 @@ export const loginUser = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       return authService.login(data);
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
@@ -82,12 +89,12 @@ export const loginUser = createAsyncThunk(
 
 export const loginToken = createAsyncThunk(
   "auth/loginToken",
-  async (data, thunkAPI) => {
+  async (data:UserLoginDatatype, thunkAPI) => {
     try {
       return authService.loginToken(data);
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
@@ -102,9 +109,9 @@ export const logOutUser = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       return authService.logOutUser();
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
@@ -119,9 +126,9 @@ export const signinUser = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       return authService.signinUser(data);
-    } catch (error) {
+    } catch (error:any) {
       const message =
-        (error.response &&
+        (error?.response &&
           error.response.data &&
           error.response.data.message) ||
         error.message ||
