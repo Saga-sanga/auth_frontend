@@ -11,9 +11,8 @@ import OtpInput from "react-otp-input";
 import { AppDispatch } from "../../store";
 import logo from "../Signup/images/logo.svg";
 import graphic from "./images/login-graphic.svg";
-import { EmailComponent } from "./components/EmailComponent";
-import { PasswordComponent } from "./components/PasswordComponent";
 import { useLocation } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 
 type FormValues = {
   username: string;
@@ -21,6 +20,20 @@ type FormValues = {
   type: string | null;
   otp: string | undefined;
 };
+
+type LoginContextType = {
+  handleEmailSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handlePasswordSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: any;
+  register: any;
+  errors: any;
+  password: FormDataEntryValue;
+  customError: any;
+};
+
+export function useLoginContext() {
+  return useOutletContext<LoginContextType>();
+}
 
 const Login = () => {
   const { userToken, user } = useSelector((state: any) => state.auth);
@@ -244,20 +257,18 @@ const Login = () => {
             <h1 className="scroll-m-20 text-[2.5rem] text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
               Login to your AuthX account
             </h1>
-            {path != "/password" ? (
-              <EmailComponent
-                handleEmailSubmit={handleEmailSubmit}
-                register={register}
-                errors={errors}
-                handleSubmit={handleSubmit}
-              />
-            ) : (
-              <PasswordComponent
-                handlePasswordSubmit={handlePasswordSubmit}
-                password={password}
-                errors={customError}
-              />
-            )}
+            {/* Pass Context to child elements */}
+            <Outlet
+              context={{
+                handleEmailSubmit,
+                handlePasswordSubmit,
+                handleSubmit,
+                register,
+                errors,
+                password,
+                customError,
+              }}
+            />
           </div>
         </div>
       </div>
@@ -278,9 +289,7 @@ const Login = () => {
         </span>
       </div>
 
-      <Modal
-        show={show}
-      >
+      <Modal show={show}>
         <div className="bg-white rounded-3xl p-16 mb-[20vh] mx-6 w-max self-center">
           <div>
             <div className="">

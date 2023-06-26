@@ -2,18 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { createRipple } from "../../../helper/createRipple";
+import { useLoginContext } from "../index";
 
-type PasswordSubmitType = {
-  handlePasswordSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  password: string | File;
-  errors: any;
-};
-
-export const PasswordComponent = ({
-  handlePasswordSubmit,
-  password,
-  errors,
-}: PasswordSubmitType) => {
+export const PasswordComponent = () => {
+  const {
+    handlePasswordSubmit,
+    password,
+    customError: errors,
+  } = useLoginContext();
   return (
     <div className="login-wrapper form-wrapper">
       <form
@@ -31,9 +27,7 @@ export const PasswordComponent = ({
             id="password"
             type="password"
             className="form-control"
-            defaultValue={
-              password as string
-            }
+            defaultValue={password as string}
             required
             name="password"
             placeholder="Enter password"

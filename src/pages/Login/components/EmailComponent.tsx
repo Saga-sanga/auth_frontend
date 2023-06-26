@@ -2,21 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaAngleRight } from "react-icons/fa";
 import { createRipple } from "../../../helper/createRipple";
+import { useLoginContext } from "../index";
 
-type EmailSubmitType = {
-  handleEmailSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  register: any;
-  errors: any;
-  handleSubmit: any;
-};
-
-export const EmailComponent = ({
-  handleEmailSubmit,
-  register,
-  errors,
-  handleSubmit,
-}: EmailSubmitType) => {
-  console.log("redered", errors);
+export const EmailComponent = () => {
+  // console.log("redered", errors);
+  const { handleEmailSubmit, register, errors, handleSubmit } =
+    useLoginContext();
   return (
     <div className="login-wrapper form-wrapper">
       <form

@@ -17,6 +17,7 @@ import Account from "./pages/Account/Account";
 import PasswordReset from "./pages/password_reset/passwordReset";
 import NewPassword from "./pages/password_reset/newPassword";
 import { PasswordComponent } from "./pages/Login/components/PasswordComponent";
+import { EmailComponent } from "./pages/Login/components/EmailComponent";
 
 function App() {
   return (
@@ -24,8 +25,10 @@ function App() {
       <Header />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/password" element={<Login />} />
+          <Route path="/" element={<Login />} >
+            <Route index element={<EmailComponent />} />
+            <Route path="/password" element={<PasswordComponent/>} />
+          </Route>
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/reset-password" element={<PasswordReset />} />
           <Route path="/new-password" element={<NewPassword />} />
