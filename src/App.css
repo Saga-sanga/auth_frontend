@@ -20,7 +20,13 @@ body {
 
 /* ########### FOR SIGN UP PAGE ########## */
 .otp-input-width {
-  width: 3rem !important;
+  width: 2rem !important;
+}
+
+@media (min-width: 640px) {
+  .otp-input-width {
+    width: 3rem !important;
+  }
 }
 
 .login-2-page {

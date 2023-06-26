@@ -6,7 +6,8 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginToken, loginUser } from "../../Feature/Auth/authSlice";
 import { useNavigate } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+// import { Modal } from "react-bootstrap";
+import Modal from "../../components/Modal";
 import OtpInput from "react-otp-input";
 import { AppDispatch } from "../../store";
 import logo from "../Signup/images/logo.svg";
@@ -280,12 +281,8 @@ const Login = () => {
 
       <Modal
         show={show}
-        onHide={() => setShow(false)}
-        backdrop="static"
-        keyboard={false}
-        className="modal-dialog-login"
       >
-        <div className="bg-white rounded-3xl p-16 mt-[20vh] w-max self-center">
+        <div className="bg-white rounded-3xl p-16 mb-[20vh] mx-6 w-max self-center">
           <div>
             <div className="">
               <div className="text-3xl text-center mb-4">Enter MFA OTP</div>

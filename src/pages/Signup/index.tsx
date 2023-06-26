@@ -3,7 +3,8 @@ import { LuXCircle } from "react-icons/lu";
 import { FaAngleRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+// import { Modal } from "react-bootstrap";
+import Modal from "../../components/Modal";
 import logo from "./images/logo.svg";
 import graphics from "./images/signup-graphic.svg";
 import OtpInput from "react-otp-input";
@@ -25,6 +26,13 @@ type RequestObjectType = {
   types: string;
 };
 
+type RegisterUser = {
+  username: string;
+  password: string;
+  "referral-id": string | null | undefined;
+  agreeTerms: boolean | undefined;
+};
+
 //yup schema
 const registerSchema = yup
   .object({
@@ -40,15 +48,7 @@ const registerSchema = yup
   })
   .required();
 
-type RegisterUser = {
-  username: string;
-  password: string;
-  "referral-id": string | null | undefined;
-  agreeTerms: boolean | undefined;
-};
 // TODO: debounce I have not received email button
-// Remove bootstrap components
-// Add email validation
 const SignUp = () => {
   const navigate = useNavigate();
 
@@ -72,11 +72,7 @@ const SignUp = () => {
   // Alert component
   const AlertMessage = ({ message }: { message: string }) => {
     return (
-      <Alert
-        // className={`${alert ? "" : "hidden"
-        //   } absolute top-6 w-96 bg-yellow-400 z-[1100]`}
-        className="absolute top-6 w-96 bg-yellow-400 z-[1100]"
-      >
+      <Alert className="fixed top-6 w-96 bg-yellow-400 z-[1100]">
         <AlertTitle>Notice!</AlertTitle>
         <button
           onClick={() => setAlert(false)}
@@ -92,7 +88,7 @@ const SignUp = () => {
   // OTP action
   useEffect(() => {
     if (otp.length === 8) {
-      console.log("verifying OTP");
+      console.log("verifying OTP", otp);
       setLoading(true);
       handleOTPValidation();
     }
@@ -116,6 +112,7 @@ const SignUp = () => {
       }
     }
 
+    console.log(requestObject);
     if (requestObject) {
       fetchdata();
     }
@@ -139,6 +136,7 @@ const SignUp = () => {
       .then((data) => {
         setLoading(false);
         if (data.status === 200 && data.is_ok === true) {
+          setShow(false);
           navigate("/");
         }
         if (data.detail) {
@@ -203,7 +201,7 @@ const SignUp = () => {
         <div className="self-start mt-7">
           <img className="w-8" src={logo} alt="AuthX logo" />
         </div>
-        <div className="flex my-12 items-center justify-center grow sm:mr-12">
+        <div className="flex my-8 items-center justify-center grow sm:mr-12">
           <div className="md:w-96 lg:w-[32rem]">
             <img className="mx-auto mb-8" src={logo} alt="AuthX logo" />
             <h1 className="scroll-m-20 text-[2.5rem] text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
@@ -249,7 +247,9 @@ const SignUp = () => {
                     {...register("password")}
                     id="password"
                     type="password"
-                    className={`form-control border h-14 rounded-lg border-slate-800 w-full ${errors.password && "border-red"}`}
+                    className={`form-control ${
+                      errors.password && "border-red"
+                    }`}
                     placeholder="Enter password"
                   />
                   <ErrorMessage
@@ -324,9 +324,9 @@ const SignUp = () => {
 
                 <div className="ats-content mt-8 md:mt-11">
                   <p className="mb-0 text-xl flex items-center flex-wrap">
-                    I already have an AuthX account &nbsp;
+                    I already have an AuthX account
                     <Link
-                      className="a-t-s a-link text-xl flex items-center"
+                      className="a-t-s a-link pl-2 text-xl flex items-center"
                       to="/"
                     >
                       advance to Login{" "}
@@ -363,13 +363,9 @@ const SignUp = () => {
 
       <Modal
         show={show}
-        onHide={() => setShow(false)}
-        backdrop="static"
-        keyboard={false}
-        className="modal-dialog-popup"
       >
-        <div className="bg-white rounded-3xl p-16">
-          <p className="font-light">
+        <div className="bg-white max-w-3xl mt-4 mb-12 rounded-3xl p-12 md:p-16">
+          <p className="font-light text-center">
             Please check your email for a registration link or OTP. You can
             register any way by clicking on the{" "}
             <span className="text_design">link in E-mail </span>or{" "}
@@ -381,7 +377,9 @@ const SignUp = () => {
             <div className="col-lg-2"></div>
             <div className="">
               <div className="number_input">
-                <div className="text-3xl my-11">Enter e-mail OTP</div>
+                <div className="text-3xl text-center my-11">
+                  Enter e-mail OTP
+                </div>
                 <OtpInput
                   containerStyle="flex justify-center gap-1"
                   inputStyle="otp-input-width h-12 p-0 text-center rounded-xl"
@@ -412,34 +410,28 @@ const SignUp = () => {
 
       <Modal
         show={loading}
-        onHide={() => setLoading(false)}
-        backdrop="static"
-        keyboard={false}
-        className="modal-dialog-coin"
       >
-        <div className="h-[80vh]">
-          <div className="absolute inset-x-1/2 inset-y-1/2">
-            <svg
-              className="animate-spin w-14 h-14 -ml-1 mr-3 text-white"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              ></circle>
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>
-          </div>
+        <div className="mb-12">
+          <svg
+            className="animate-spin w-14 h-14 -ml-1 mr-3 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
         </div>
       </Modal>
     </div>
