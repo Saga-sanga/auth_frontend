@@ -14,11 +14,24 @@ export function Sidebar() {
     useEffect(() => {
         if (windowWidth < 800) {
             setCollapse(true)
-            console.log(windowWidth)
+            // console.log(windowWidth)
         } else {
             setCollapse(false)
         }
     }, [windowWidth])
+
+    // Add event listener to window object for resizing window
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        }
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        }
+    }, [])
 
     return (
         <div className='' >
