@@ -8,7 +8,6 @@ import { loginToken, loginUser } from "@/redux/Auth/authSlice";
 import Modal from "@/components/Modal";
 import OtpInput from "react-otp-input";
 import { AppDispatch } from "@/redux/store";
-import logo from "../login/images/logo.svg";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { checkUser } from "@/helper/api";
