@@ -14,3 +14,13 @@ body {
   margin: 0;
   font-family: "Inter", sans-serif;
 }
+
+.forward-arr {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.btn-spl-primary:hover .forward-arr {
+  transform: translateX(6px) !important;
+  transition: all 0.5s ease-in-out;
+}

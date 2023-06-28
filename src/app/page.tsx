@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -258,19 +259,19 @@ const Login = () => {
             <h1 className="scroll-m-20 text-4xl text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
               Login to your AuthX account
             </h1>
-            {path != "/password" ? (
+            {path !== "/password" ? (
               <EmailComponent
                 handleEmailSubmit={handleEmailSubmit}
                 register={register}
                 errors={errors}
                 handleSubmit={handleSubmit}
               />
-            ) : (
-              <PasswordComponent
-                handlePasswordSubmit={handlePasswordSubmit}
-                password={password}
-                errors={customError}
-              />
+            ) : (""
+              // <PasswordComponent
+              //   handlePasswordSubmit={handlePasswordSubmit}
+              //   password={password}
+              //   errors={customError}
+              // />
             )}
           </div>
         </div>
