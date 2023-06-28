@@ -1,15 +1,16 @@
 import React from 'react'
 import { Input } from "../../../components/ui/Input"
-import { OrgTable } from "./Table"
 import { Button } from '../../../components/ui/Button'
 import { Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-
-function OrgList({ data }) {
+interface dataType {
+    data: object[]
+}
+function OrgList({ data }: dataType) {
     const router = useRouter()
     const handleNavigation = () => {
-        router.push("/dashboard/add-organization")
+        router.push("/account/add-organization")
     }
     return (
         <section className="max-w-[1180px] pt-9 overflow-x-auto" >
@@ -38,7 +39,6 @@ function OrgList({ data }) {
             </div>
 
             <div className="max-h-[400px] overflow-hidden mt-12" >
-                <OrgTable data={data} />
             </div>
         </section>
     )

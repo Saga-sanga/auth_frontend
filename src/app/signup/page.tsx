@@ -301,7 +301,15 @@ const SignUp = () => {
 
                 <div className="form-group">
                   <div className="d-grid start">
-                    <FormButton>Next</FormButton>
+                    <FormButton>
+                      <span className="text-2xl font-semibold tracking-widest">
+                        Next
+                      </span>
+                      <span className="forward-arr">
+                        {" "}
+                        <FaAngleRight className="ca-forward-arr text-2xl mt-[2px]" />
+                      </span>
+                    </FormButton>
                   </div>
                 </div>
 
@@ -340,11 +348,11 @@ const SignUp = () => {
                   <p className="mb-0 text-xl flex items-center flex-wrap">
                     I already have an AuthX account
                     <Link
-                      className="a-t-s btn-spl-primary a-link pl-2 text-xl flex items-center"
+                      className="a-t-s a-link pl-2 text-xl flex items-center"
                       href="/"
                     >
                       <LinkText>advance to Login</LinkText>
-                      <span className="forward-arr">
+                      <span className="forward-arr arr-black">
                         {" "}
                         <FaAngleRight className="pt-1 text-2xl" />
                       </span>

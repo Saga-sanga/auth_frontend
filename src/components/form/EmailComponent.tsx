@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createRipple } from "@/helper/createRipple";
 import { FormButton } from "./FormButton";
 import { LinkText } from "./LinkText";
+import { Input } from "@/components/ui/Input";
 
 type EmailSubmitType = {
   handleEmailSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -23,6 +24,7 @@ export const EmailComponent = ({
     <div className="login-wrapper form-wrapper">
       <form
         onSubmit={handleSubmit(handleEmailSubmit)}
+        // className="was-validated"
       >
         <div className="form-group relative">
           <label
@@ -58,15 +60,9 @@ export const EmailComponent = ({
         <div className="ats-content mt-8 md:mt-11">
           <p className="mb-0 text-xl flex items-center flex-wrap">
             I don’t have an AuthX account
-            <Link
-              className="btn-spl-primary pl-2 text-xl flex items-center"
-              href="/signup"
-            >
-              <LinkText>advance to Signup</LinkText>
-              <span className="forward-arr">
-                <FaAngleRight className="pt-1 text-2xl" />
-              </span>
-            </Link>
+            <LinkText to="/signup">
+              advance to Signup
+            </LinkText>
           </p>
         </div>
       </form>

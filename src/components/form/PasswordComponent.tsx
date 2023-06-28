@@ -2,8 +2,6 @@ import React from "react";
 import { FaAngleRight } from "react-icons/fa";
 import { createRipple } from "@/helper/createRipple";
 import Link from "next/link";
-import { LinkText } from "./LinkText";
-import { FormButton } from "./FormButton";
 
 type PasswordSubmitType = {
   handlePasswordSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -20,6 +18,7 @@ export const PasswordComponent = ({
     <div className="login-wrapper form-wrapper">
       <form
         onSubmit={handlePasswordSubmit}
+      // className="was-validated"
       >
         <div className="form-group relative">
           <label
@@ -48,7 +47,17 @@ export const PasswordComponent = ({
 
         <div className="form-group">
           <div className="d-grid start">
-            <FormButton>Next</FormButton>
+            <button
+              type="submit"
+              onClick={createRipple}
+              className="ripple-button btn btn-spl-primary mt-8 md:mt-11 btn-ca bg-gradient-to-r from-black to-[#6F6F6F] flex items-center justify-center"
+            >
+              <span>Next</span>
+              <span className="forward-arr">
+                {" "}
+                <FaAngleRight className="ca-forward-arr text-2xl mt-[2px]" />
+              </span>
+            </button>
           </div>
         </div>
 
@@ -56,11 +65,11 @@ export const PasswordComponent = ({
           <p className="mb-0 text-xl flex items-center flex-wrap">
             Forgot Password?
             <Link
-              className="btn-spl-primary pl-2 text-xl flex items-center"
+              className="pl-2 a-t-s a-link text-xl flex items-center"
               href="/reset-password"
             >
-              <LinkText>advance to reset Password</LinkText> 
-              <span className="forward-arr">
+              advance to reset Password{" "}
+              <span className="forward-arr arr-black">
                 {" "}
                 <FaAngleRight className="pt-1 text-2xl" />
               </span>

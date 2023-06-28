@@ -8,45 +8,44 @@ import OrgList from './OrgList'
 function AccountIndex() {
 
     const [hasOrg, setHasOrg] = useState(false)
-    const [data, setData] = useState([{}])
+    const [data, setData] = useState(null)
     const router = useRouter()
 
-
-    useEffect(() => {
-        fetch('https://api.trustauthx.com/org/all', {
-            method: 'GET',
-            headers: {
-                'accept': 'application/json',
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaHlhbWNoNzI4QGdtYWlsLmNvbSIsImFsdCI6IjY3MGQ0ZTgzZDEwYjQzMzc4ZTRmMmVjZmVjODEwYzhjLTJlYTAyMTkwOTAyNjVlMDZiZjZlOWQ1MmUwYzU0MmNiIiwicG9vbCI6dHJ1ZSwic2NvcGUiOjEsImV4cCI6MTY4Nzg0MTk0MH0.q0S8wAeTx3GyWwyQ8R8wtGjNI6fCDz6rUkGXFPBVaW0'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data[0].name) {
-                    console.log(data);
-                    setData(data)
-                    setHasOrg(true)
-                } else {
-                    setHasOrg(false)
-                }
-            })
-            .catch(error => {
-                console.error(error);
-                setData([{ name: "" }])
-            });
-    }, [])
+    // useEffect(() => {
+    //     fetch('https://api.trustauthx.com/org/all', {
+    //         method: 'GET',
+    //         headers: {
+    //             'accept': 'application/json',
+    //             'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzaHlhbWNoNzI4QGdtYWlsLmNvbSIsImFsdCI6IjY3MGQ0ZTgzZDEwYjQzMzc4ZTRmMmVjZmVjODEwYzhjLTJlYTAyMTkwOTAyNjVlMDZiZjZlOWQ1MmUwYzU0MmNiIiwicG9vbCI6dHJ1ZSwic2NvcGUiOjEsImV4cCI6MTY4Nzg0MTk0MH0.q0S8wAeTx3GyWwyQ8R8wtGjNI6fCDz6rUkGXFPBVaW0'
+    //         }
+    //     })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             if (data[0].name) {
+    //                 console.log(data);
+    //                 setData(data)
+    //                 setHasOrg(true)
+    //             } else {
+    //                 setHasOrg(false)
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error(error);
+    //             setData(null)
+    //         });
+    // }, [])
 
 
     const handleNavigation = () => {
         router.push("/dashboard/add-organization")
     }
 
-    useEffect(() => {
-        if (data[0].name)
-            if (data[0].name !== "") {
-                setHasOrg(true)
-            }
-    }, [data, router])
+    // useEffect(() => {
+    //     if (data[0]?.name)
+    //         if (data[0].name !== "") {
+    //             setHasOrg(true)
+    //         }
+    // }, [data, router])
     return (
         <section className='oveflow-x-auto'>
             {!hasOrg &&
@@ -68,7 +67,7 @@ function AccountIndex() {
                 </div>
             }
 
-            {hasOrg && <OrgList data={data} />}
+            {/* {hasOrg && <OrgList data={data} />} */}
 
         </section>
     )

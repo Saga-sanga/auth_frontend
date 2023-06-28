@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -11,10 +10,13 @@ import { LOGIN_GRAPHIC, LOGO } from "@/constants";
 import { checkUser } from "@/helper/api";
 import { loginToken, loginUser } from "@/redux/Auth/authSlice";
 import { useRouter, usePathname } from "next/navigation";
-import { EmailComponent } from "@/components/form/EmailComponent";
-import { PasswordComponent } from "@/components/form/PasswordComponent";
+// import { EmailComponent } from "./(auth)/login/components/EmailComponent";
+// import { PasswordComponent } from "./(auth)/login/components/PasswordComponent";
 import { AppDispatch } from "@/redux/store";
 import Image from "next/image";
+import { EmailComponent } from "@/components/form/EmailComponent";
+import { PasswordComponent } from "@/components/form/PasswordComponent";
+PasswordComponent
 
 type FormValues = {
   username: string;
@@ -259,19 +261,19 @@ const Login = () => {
             <h1 className="scroll-m-20 text-4xl text-center pb-9 md:pb-11 font-semibold transition-colors first:mt-0">
               Login to your AuthX account
             </h1>
-            {path !== "/password" ? (
+            {path != "/password" ? (
               <EmailComponent
                 handleEmailSubmit={handleEmailSubmit}
                 register={register}
                 errors={errors}
                 handleSubmit={handleSubmit}
               />
-            ) : (""
-              // <PasswordComponent
-              //   handlePasswordSubmit={handlePasswordSubmit}
-              //   password={password}
-              //   errors={customError}
-              // />
+            ) : (
+              <PasswordComponent
+                handlePasswordSubmit={handlePasswordSubmit}
+                password={password}
+                errors={customError}
+              />
             )}
           </div>
         </div>
