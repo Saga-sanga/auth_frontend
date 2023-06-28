@@ -1,7 +1,4 @@
 import React from "react";
-import { FaAngleRight } from "react-icons/fa";
-import { createRipple } from "@/helper/createRipple";
-import Link from "next/link";
 import { FormButton } from "./FormButton";
 import { LinkText } from "./LinkText";
 
